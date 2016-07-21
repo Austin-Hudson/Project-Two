@@ -20,9 +20,9 @@
   flex-direction: column;
 }
 
-#restaurant-name, #address {
+#restaurant-name, #address, #rating {
   text-align: center;
-  margin: 10px; 
+  margin: 10px;
 }
 
 #restaurant-name {

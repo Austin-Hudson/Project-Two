@@ -54,7 +54,8 @@ document.addEventListener("DOMContentLoaded", function(){
           var restaurant = {
             name: res.name,
             address: res.vicinity,
-            rating: res.rating
+            rating: res.rating,
+            comments: []
           }
             //populate the panel with data
             var restName = document.querySelector("#restaurant-name");
@@ -66,9 +67,19 @@ document.addEventListener("DOMContentLoaded", function(){
 
             //animate so the panels move
             $(panel).slideDown("slow")
-          // $.post('http://localhost:3000/restaurants', restaurant, function(response){
-          //   console.log("Response:", response);
-          // })
+
+            //push comment
+            var commentBtn = document.querySelector("#comment-btn");
+
+            commentBtn.addEventListener("click", function(){
+
+              restaurant["comments"].push(document.querySelector("#comment-area").value);
+
+              $.post('http://localhost:3000/restaurants', restaurant, function(response){
+                console.log("Response:", response);
+              })
+
+            });
 
         })
 

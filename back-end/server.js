@@ -12,9 +12,29 @@ app.use(cors());
 /* extended:true = put it in an obj */
 app.use(bodyParser.urlencoded({extended: true}));
 
-/* marvel search */
-app.post('/restaurant/search', function(req, res) {
+var RESTAURANT_COLLECTION = 'restaurants';
 
+// connect to the database server!
+var url = 'mongodb://localhost:27017/food_app'
+mongodb.MongoClient.connect(process.env.MONGODB_URI || url, function (err, database) {
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  }
+
+  // Save database object from the callback for reuse.
+  db = database;
+  console.log("Database connection ready");
+
+  // Initialize the app. another way to start a server in express
+  var server = app.listen(process.env.PORT || 3000, function () {
+    var port = server.address().port;
+    console.log("App now running on port", port);
+  });
+});
+
+/* restaurant search */
+app.post('/restaurant/search', function(req, res) {
 
   var baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
   var apiKeyQueryString = "?key=";
@@ -40,7 +60,21 @@ app.post('/restaurant/search', function(req, res) {
 
 }); // end post request
 
-/* tell our app where to listen */
-app.listen(3000, function(){
-  console.log('listen to events on port:', PORT);
+app.post('/restaurants/', function(req, res) {
+  var newRestaurant = req.body;
+
+ //insert one new restaurnt
+   db.collection(RESTAURANT_COLLECTION).insert(newRestaurant, function(err, doc) {
+    if (err) {
+      handleError(response, err.message, "Failed to add new character.");
+    } else {
+      res.status(201).json(doc);
+    }
+  });
 });
+
+// when things go wrong
+function handleError(res, reason, message, code) {
+  console.log("ERROR: " + reason);
+  res.status(code || 500).json({"error": message});
+}
