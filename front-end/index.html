@@ -13,8 +13,17 @@
       <input type="text" name="location-text" id="location-text" placeholder="location" value="">
       <button type="button" name="search-btn" id="search-location">search location</button>
     </form>
-    <div class="map" id="map">
+    <div class="map" id="map"></div>
     <div class="results"></div>
+    <div id="panel">
+      <p id=restaurant-name></p>
+      <p id="address"></p>
+      <p id="rating"></p>
+      <form id="comment-form">
+        <textarea name="comment-area" rows="8" cols="40" id="comment-area"></textarea>
+        <button type="button" name="comment-btn" id="comment-btn">Leave Comment</button>
+      </form>
+    </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAA3l2tw8FvuG2I1IiQALnVE7cKXZ1-SQ"
    async defer></script>
   </body>

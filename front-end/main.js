@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", function(){
   console.log("main.js is loaded.");
 
   var searchBtn = document.querySelector("#search-location");
+  var commentBtn = document.querySelector("#comment-btn");
+  var panel = document.querySelector("#panel");
   var latitude, longitude;
   var currentLocation;
   var map;
@@ -14,6 +16,12 @@ document.addEventListener("DOMContentLoaded", function(){
     userInput = document.querySelector("#location-text").value;
   });
 
+  commentBtn.addEventListener("click", function(){
+           $("#panel").slideUp("slow");
+    // navigator.geolocation.getCurrentPosition(success,error)
+    // userInput = document.querySelector("#location-text").value;
+  });
+
   function displayMap(response){
     currentLocation =  new google.maps.LatLng(latitude,longitude);
     map = new google.maps.Map(document.getElementById('map'), {
@@ -21,10 +29,10 @@ document.addEventListener("DOMContentLoaded", function(){
     zoom: 15
   });
     displayResults(response.results);
+    console.log(response);
   }
 
   function displayResults(results) {
-    console.log(results);
     for (var i = 0; i < results.length; i++) {
       createMarker(results[i]);
     }
@@ -34,28 +42,40 @@ document.addEventListener("DOMContentLoaded", function(){
         position: res.geometry.location,
         map: map
       })
-      console.log(marker);
-      // infoWindow = new google.maps.InfoWindow({
-      //     content: ""
-      // });
-      // google.maps.event.addListener(marker, "click", function(){
-      //   infoWindow.setContent(res.name + "<button type='button' id='fav'>Fav it!</button");
-      //   infoWindow.open(map, this);
-      //
-      //   document.querySelector("#fav").addEventListener("click", function(){
-      //     var location = {
-      //       name: res.name,
-      //       address: res.formatted_address
-      //     }
-      //     console.log(location);
-      //     $.post('http://localhost:3000/locations', location, function(response){
-      //       console.log("Response:", response);
-      //     })
-      //   })
+      infoWindow = new google.maps.InfoWindow({
+          content: ""
+      });
+      google.maps.event.addListener(marker, "click", function(){
+        infoWindow.setContent(res.name +  "<button type='button' id='comment'>Comment!</button");
+        infoWindow.open(map, this);
 
-      // });
+        //TO DO FIGURE OUT HOW TO DO FILE UPLOAD
+        document.querySelector("#comment").addEventListener("click", function(){
+          var restaurant = {
+            name: res.name,
+            address: res.vicinity,
+            rating: res.rating
+          }
+            //populate the panel with data
+            var restName = document.querySelector("#restaurant-name");
+            var address = document.querySelector("#address");
+            var rating = document.querySelector("#rating");
+            restName.innerHTML = restaurant.name;
+            address.innerHTML = restaurant.address;
+            rating.innerHTML = restaurant.rating;
+
+            //animate so the panels move
+            $(panel).slideDown("slow")
+          // $.post('http://localhost:3000/restaurants', restaurant, function(response){
+          //   console.log("Response:", response);
+          // })
+
+        })
+
+      });
 
     }
+
   function success(pos) {
     latitude = pos.coords.latitude;
     longitude = pos.coords.longitude;
@@ -65,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function(){
       queryString: userInput,
       lat: latitude,
       long: longitude,
-      radius: '30'
+      radius: '500'
     };
 
     $.ajax({

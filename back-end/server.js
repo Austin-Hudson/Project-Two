@@ -16,15 +16,16 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.post('/restaurant/search', function(req, res) {
 
 
-  var baseUrl = "https://maps.googleapis.com/maps/api/place/textsearch/json";
+  var baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
   var apiKeyQueryString = "?key=";
   var GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
-  var restaurant = "&query=" + req.body.queryString;
+  var query = "&name=" + req.body.queryString;
   var lat = req.body.lat;
   var long = req.body.long;
   var location = "&location=" + lat + ',' + long;
   var radius = "&radius=" + req.body.radius;
-  var fullQuery = baseUrl + apiKeyQueryString + GOOGLE_MAPS_API_KEY + restaurant + location + radius;
+  var type = "&type=restaurant";
+  var fullQuery = baseUrl + apiKeyQueryString + GOOGLE_MAPS_API_KEY + query + type + radius + location;
   console.log("fullQuery:", fullQuery); // prints to terminal
 
   request({
