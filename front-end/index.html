@@ -8,6 +8,14 @@
     <link rel="stylesheet" href="index.css" charset="utf-8">
   </head>
   <body>
-
+    <form>
+      <label for="location">Location:</label>
+      <input type="text" name="location-text" id="location-text" placeholder="location" value="">
+      <button type="button" name="search-btn" id="search-location">search location</button>
+    </form>
+    <div class="map" id="map">
+    <div class="results"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAA3l2tw8FvuG2I1IiQALnVE7cKXZ1-SQ"
+   async defer></script>
   </body>
 </html>
