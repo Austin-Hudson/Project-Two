@@ -1,8 +1,10 @@
 var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
+var busboyBodyParser = require("busboy-body-parser");
 var mongodb = require('mongodb');
 var request = require('request');
+var aws = require('aws-sdk');
 var app = express();
 var PORT = 3000;
 
@@ -11,6 +13,26 @@ app.use(cors());
 
 /* extended:true = put it in an obj */
 app.use(bodyParser.urlencoded({extended: true}));
+
+//set limit to the upload
+app.use(busboyBodyParser({ limit: '5mb' }));
+
+//aws setup
+aws.config.update({
+  accessKeyId: process.env.aws_access_key_id,
+  secretAccessKey: process.env.aws_secret_access_key,
+  region:'us-west-2'
+});
+
+var s3 = new aws.S3();
+
+// s3.createBucket({Bucket: 'project-two-restaurants'}, function(err, resp) {
+//   if (err) {
+//    console.log(err);
+//    return;
+// }
+//   console.log(resp);
+// });
 
 var RESTAURANT_COLLECTION = 'restaurants';
 
@@ -32,6 +54,40 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI || url, function (err, datab
     console.log("App now running on port", port);
   });
 });
+
+//file upload
+app.post("/upload", function (req, res) {
+  s3.putObject( {Bucket:'project-two-restaurants', Key:req.files.name["name"], ACL:'public-read', Body: req.files.name["data"]}, function(err, resp) {
+    if (err) {
+        console.log(err);
+        return;
+    }
+    console.log(resp);
+
+  });
+});
+//get image and send it
+app.get("/restaurants/img", function(req, res){
+  var params = {Bucket: "project-two-restaurants"};
+  s3.listObjects(params, function(err, data){
+    var bucketContents = data.Contents;
+    var urls = [];
+    for(var i=0; i < bucketContents.length; i++){
+      var urlParams = {Bucket: 'project-two-restaurants', Key: bucketContents[i].Key};
+      s3.getSignedUrl('getObject', urlParams, function(err, url){
+        //console.log("url", url);
+        urls.push(url);
+      })
+    }
+      var returnedData = {
+        urls: urls
+      }
+      console.log("Returned Data:", returnedData);
+      res.json(returnedData);
+      res.end();
+  })
+})
+
 
 /* restaurant search */
 app.post('/restaurant/search', function(req, res) {

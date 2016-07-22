@@ -28,3 +28,13 @@
 #restaurant-name {
   font-size: 32px;
 }
+
+.fotorama{
+  height: 100px;
+}
+
+img {
+  height: 100px;
+  width: 100px;
+  margin: 5px; 
+}

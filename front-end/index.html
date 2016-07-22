@@ -23,6 +23,11 @@
         <textarea name="comment-area" rows="8" cols="40" id="comment-area"></textarea>
         <button type="button" name="comment-btn" id="comment-btn">Leave Comment</button>
       </form>
+      <form id="upload-form" action="/upload/" method="post" enctype='multipart/form-data'>
+        <input type="file" name="name" value="" id="file-input">
+        <input type="submit" id="submit-file-btn" value="Upload Image" name="submit">
+      </form>
+      <div class="fotorama"></div>
     </div>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAAA3l2tw8FvuG2I1IiQALnVE7cKXZ1-SQ"
    async defer></script>
